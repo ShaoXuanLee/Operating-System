@@ -1,0 +1,219 @@
+Understanding
+    Create a http proxy server
+
+    http request messge format 
+        HTTP request line
+        header lines
+        blank line 
+
+        example
+            GET /hello.html HTTP/1.0\r\n
+            Host: 127.0.0.1:8000\r\n
+            Connection: keep-alive\r\n
+            Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\r\n
+            User-Agent: Chrome/45.0.2454.93\r\n
+            Accept-Encoding: gzip,deflate,sdch\r\n
+            Accept-Language: en-US,en;q=0.8\r\n
+            \r\n
+
+        note 
+            represented as \r\n in C
+
+    http response msg format
+        HTTP response status line
+        header lines
+        blank line 
+        content requested 
+
+        example
+            HTTP/1.0 200 OK\r\n
+            Content-Type: text/html\r\n
+            Content-Length: 128\r\n
+            \r\n
+            <html>\n
+            <body>\n
+            <h1>Hello World</h1>\n
+            <p>\n
+            Let’s see if this works\n
+            </p>\n
+            </body>\n
+            </html>\n
+    
+    status
+        1xx indicates an informational message only
+        2xx indicates success
+        3xx redirects the client to another URL
+        4xx indicates an error in the client
+        5xx indicates an error in the server
+
+given stater code
+
+objective
+    You will be creating a proxy web server. From a network standpoint, the server should implement the following:
+        Create a listening socket and bind it to a port.
+        Wait for clients to connect to the port.
+        Accept the client and obtain a new connection socket
+        Read in and parse the HTTP request
+        Add the request to your priority queue in priority order (More details below).
+        Worker threads will pick up a request from the queue in priority order and send it to the target server.
+        Once the response is received from the target server, send it back to the client (or send an error message).
+
+
+tip
+    the listeners and workers is similar to consumer / producer problem
+
+
+To run everything 
+    have 3 terminals
+    one for server in public_html/
+    one for proxy server (compiled) in starter-code/
+    one for sending request, ie 
+
+    based on this from write up
+            Start the file server inside the public_html folder
+            $ python3 -m http.server 57455
+
+            Start your proxyserver
+            $ ./proxyserver -l 1 33489 -w 1 -i 127.0.0.1 -p 57455 -q 10
+
+            Send a request to the proxy server
+            $ curl 'http://localhost:33489/1/dummy1.html'
+
+            Send a GetJob request to your proxyserver
+            curl 'http://localhost:33489/GetJob'
+
+    then to clean up run ./clean.sh at p6-main/
+
+note
+    outputs
+        server
+            127.0.0.1 - - [14/Nov/2023 22:22:46] "GET /1/dummy1.html HTTP/1.1" 200 -
+            127.0.0.1 - - [14/Nov/2023 22:23:02] code 404, message File not found
+            127.0.0.1 - - [14/Nov/2023 22:23:02] "GET /GetJob HTTP/1.1" 404 -
+
+        proxy
+            Accepted connection from 127.0.0.1 on port 41101
+            Accepted connection from 127.0.0.1 on port 49853
+
+        terminal
+            curl 'http://localhost:33489/1/dummy1.html'
+            <!DOCTYPE html>
+            <html>
+                    <body>
+                            <h1>this file is in path /1/dummy1.html</h1>
+                    </body>
+            </html>
+            [bgoh@vm-instunix-11] (3)$ curl 'http://localhost:33489/GetJob'
+            <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+                    "http://www.w3.org/TR/html4/strict.dtd">
+            <html>
+                <head>
+                    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+                    <title>Error response</title>
+                </head>
+                <body>
+                    <h1>Error response</h1>
+                    <p>Error code: 404</p>
+                    <p>Message: File not found.</p>
+                    <p>Error code explanation: HTTPStatus.NOT_FOUND - Nothing matches the given URI.</p>
+                </body>
+            </html>
+
+
+discussion
+    listener threads
+        does its thing in proxy
+        specifically GetJob it does
+
+
+    worker threads
+        operating on queue and interacting 
+
+
+    use htop to figure what server is running
+    start.py needs to be able to see the two directories
+
+    most of changes in the safequeue.c and .h
+    should not be changing proxyserver.h
+        unless just adding prototype
+
+    proxyserver.c
+        should be modifying somewhere near bind()
+        cuz making multiple listeners and what not
+
+
+    avoid one big lock
+    figure out the data structure
+
+    server_forever()
+        a bunch of set up
+        once its setup
+        it binds
+        then it listens
+        the accept() is to constantly checking for requests
+
+    can two threads listen on port? NO
+    is there max num of threads? the specification said smtg like 2k to 10k
+
+
+queue idea
+
+
+
+main notion understanding of the project
+    
+
+    priority queue
+        use max heap to create it
+    
+
+read| GET /1/dummy1.html HTTP/1.1
+Host: localhost:33489
+User-Agent: curl/7.81.0
+Accept: */*
+
+
+receive| HTTP/1.0 200 OK
+Server: SimpleHTTP/0.6 Python/3.10.12
+Date: Mon, 20 Nov 2023 04:31:08 GMT
+Content-type: text/html
+Content-Length: 95
+Last-Modified: Mon, 13 Nov 2023 19:11:51 GMT
+
+<!DOCTYPE html>
+<html>
+        <body>
+                <h1>this file is in path /1/dummy1.html</h1>
+        </body>
+</html>
+
+returned| HTTP/1.0 200 OK
+Server: SimpleHTTP/0.6 Python/3.10.12
+Date: Mon, 20 Nov 2023 04:31:08 GMT
+Content-type: text/html
+Content-Length: 95
+Last-Modified: Mon, 13 Nov 2023 19:11:51 GMT
+
+<!DOCTYPE html>
+<html>
+        <body>
+                <h1>this file is in path /1/dummy1.html</h1>
+        </body>
+</html>
+
+^CCaught signal 2: Interrupt
+
+read| is the request
+receive and returned is the same
+
+test commands, shortcuts
+    ./p6-main/clean.sh 
+    ./proxyserver -l 2 33489 33490 -w 1 -i 127.0.0.1 -p 55555 -q 10
+    ~cs537-1/tests/P6/runtests
+    python3 -m http.server 55555
+    curl 'http://localhost:33490/GetJob'
+    curl -i 'http://localhost:33490/GetJob'
+    curl -H "Delay: 100" 'http://localhost:33489/1/dummy1.html'
+    curl 'http://localhost:33490/10/dummy1.html'
+
+    ./proxyserver -l 2 33489 33490 -w 5 -i 127.0.0.1 -p 55555 -q 10

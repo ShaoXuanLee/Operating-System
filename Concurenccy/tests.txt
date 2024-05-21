@@ -1,0 +1,144 @@
+~cs537-1/tests/P6/runtests
+Server address: 127.0.0.1:46395
+Running test 1 (Get file from a single port)...
+Test 1 passed
+Running test 2 (Get file from two ports)...
+Test 2 passed
+Running test 3 (Batch requests, single worker)...
+Test 3 passed
+Running test 4 (Batch requests, mutiple workers)...
+Test 4 passed
+Running test 5 (Delay)...
+Test 5 passed
+Running test 6 (Queue full error)...
+^CKeyboardInterrupt
+2023-11-22T23:03:56Z
+Traceback (most recent call last):
+  File "/home/cs537-1/tests/P6/runtests", line 338, in run_tests
+    total_score += test.run()
+  File "/home/cs537-1/tests/P6/runtests", line 209, in run
+    r = send_req_proxy(self.path, self.proxy_ports[0]) # Should fail, queue is full!
+  File "/home/cs537-1/tests/P6/runtests", line 368, in send_req_proxy
+    r = requests.get(url)
+  File "/usr/lib/python3/dist-packages/requests/api.py", line 76, in get
+    return request('get', url, params=params, **kwargs)
+  File "/usr/lib/python3/dist-packages/requests/api.py", line 61, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/usr/lib/python3/dist-packages/requests/sessions.py", line 544, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/usr/lib/python3/dist-packages/requests/sessions.py", line 699, in send
+    r.content
+  File "/usr/lib/python3/dist-packages/requests/models.py", line 831, in content
+    self._content = b''.join(self.iter_content(CONTENT_CHUNK_SIZE)) or b''
+  File "/usr/lib/python3/dist-packages/requests/models.py", line 753, in generate
+    for chunk in self.raw.stream(chunk_size, decode_content=True):
+  File "/usr/lib/python3/dist-packages/urllib3/response.py", line 576, in stream
+    data = self.read(amt=amt, decode_content=decode_content)
+  File "/usr/lib/python3/dist-packages/urllib3/response.py", line 519, in read
+    data = self._fp.read(amt) if not fp_closed else b""
+  File "/usr/lib/python3.10/http/client.py", line 466, in read
+    s = self.fp.read(amt)
+  File "/usr/lib/python3.10/socket.py", line 705, in readinto
+    return self._sock.recv_into(b)
+  File "/home/bgoh/.local/lib/python3.10/site-packages/gevent/_socketcommon.py", line 696, in recv_into
+    self._wait(self._read_event)
+  File "src/gevent/_hub_primitives.py", line 317, in gevent._gevent_c_hub_primitives.wait_on_socket
+  File "src/gevent/_hub_primitives.py", line 322, in gevent._gevent_c_hub_primitives.wait_on_socket
+  File "src/gevent/_hub_primitives.py", line 304, in gevent._gevent_c_hub_primitives._primitive_wait
+  File "src/gevent/_hub_primitives.py", line 46, in gevent._gevent_c_hub_primitives.WaitOperationsGreenlet.wait
+  File "src/gevent/_hub_primitives.py", line 46, in gevent._gevent_c_hub_primitives.WaitOperationsGreenlet.wait
+  File "src/gevent/_hub_primitives.py", line 55, in gevent._gevent_c_hub_primitives.WaitOperationsGreenlet.wait
+  File "src/gevent/_waiter.py", line 154, in gevent._gevent_c_waiter.Waiter.get
+  File "src/gevent/_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
+  File "src/gevent/_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
+  File "src/gevent/_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
+  File "src/gevent/_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
+KeyboardInterrupt
+
+Running test 7 (Empty queue in GetJob)...
+Test 7 passed
+Running test 8 (GetJob with a single job in the queue)...
+Test 8 passed
+Running test 9 (GetJob with multiple jobs in the queue)...
+Test 9 passed
+Running test 10 (Number of worker threads)...
+^CKeyboardInterrupt
+2023-11-22T23:05:09Z
+Traceback (most recent call last):
+  File "/home/cs537-1/tests/P6/runtests", line 338, in run_tests
+    total_score += test.run()
+  File "/home/cs537-1/tests/P6/runtests", line 315, in run
+    r = send_req_proxy(self.path, self.proxy_ports[0]) # The extra thread should handle
+  File "/home/cs537-1/tests/P6/runtests", line 368, in send_req_proxy
+    r = requests.get(url)
+  File "/usr/lib/python3/dist-packages/requests/api.py", line 76, in get
+    return request('get', url, params=params, **kwargs)
+  File "/usr/lib/python3/dist-packages/requests/api.py", line 61, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/usr/lib/python3/dist-packages/requests/sessions.py", line 544, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/usr/lib/python3/dist-packages/requests/sessions.py", line 699, in send
+    r.content
+  File "/usr/lib/python3/dist-packages/requests/models.py", line 831, in content
+    self._content = b''.join(self.iter_content(CONTENT_CHUNK_SIZE)) or b''
+  File "/usr/lib/python3/dist-packages/requests/models.py", line 753, in generate
+    for chunk in self.raw.stream(chunk_size, decode_content=True):
+  File "/usr/lib/python3/dist-packages/urllib3/response.py", line 576, in stream
+    data = self.read(amt=amt, decode_content=decode_content)
+  File "/usr/lib/python3/dist-packages/urllib3/response.py", line 519, in read
+    data = self._fp.read(amt) if not fp_closed else b""
+  File "/usr/lib/python3.10/http/client.py", line 466, in read
+    s = self.fp.read(amt)
+  File "/usr/lib/python3.10/socket.py", line 705, in readinto
+    return self._sock.recv_into(b)
+  File "/home/bgoh/.local/lib/python3.10/site-packages/gevent/_socketcommon.py", line 696, in recv_into
+    self._wait(self._read_event)
+  File "src/gevent/_hub_primitives.py", line 317, in gevent._gevent_c_hub_primitives.wait_on_socket
+  File "src/gevent/_hub_primitives.py", line 322, in gevent._gevent_c_hub_primitives.wait_on_socket
+  File "src/gevent/_hub_primitives.py", line 304, in gevent._gevent_c_hub_primitives._primitive_wait
+  File "src/gevent/_hub_primitives.py", line 46, in gevent._gevent_c_hub_primitives.WaitOperationsGreenlet.wait
+  File "src/gevent/_hub_primitives.py", line 46, in gevent._gevent_c_hub_primitives.WaitOperationsGreenlet.wait
+  File "src/gevent/_hub_primitives.py", line 55, in gevent._gevent_c_hub_primitives.WaitOperationsGreenlet.wait
+  File "src/gevent/_waiter.py", line 154, in gevent._gevent_c_waiter.Waiter.get
+  File "src/gevent/_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
+  File "src/gevent/_greenlet_primitives.py", line 61, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
+  File "src/gevent/_greenlet_primitives.py", line 65, in gevent._gevent_c_greenlet_primitives.SwitchOutGreenletWithLoop.switch
+  File "src/gevent/_gevent_c_greenlet_primitives.pxd", line 35, in gevent._gevent_c_greenlet_primitives._greenlet_switch
+KeyboardInterrupt
+
+Total score: 8
+
+
+4 tests passed
+[bgoh@vm-instunix-06] (91)$ ~cs537-1/tests/P6/runtests
+Server address: 127.0.0.1:60469
+Running test 1 (Get file from a single port)...
+Test 1 passed
+Running test 2 (Get file from two ports)...
+Test 2 passed
+Running test 3 (Batch requests, single worker)...
+Test 3 passed
+Running test 4 (Batch requests, mutiple workers)...
+Test 4 passed
+Running test 5 (Delay)...
+Should take at least 5s, but took 0.007596287003252655s
+Test 5 failed
+Running test 6 (Queue full error)...
+Test 6 failed
+Running test 7 (Empty queue in GetJob)...
+Expected status code 598, got 404
+Test 7 failed
+Running test 8 (GetJob with a single job in the queue)...
+Priority error. Job 0 should be /3/dummy1.html,                      but is <!DOCTYPE HTML
+Test 8 failed
+Running test 9 (GetJob with multiple jobs in the queue)...
+Priority error. Job 0 should be /5/dummy1.html,                      but is <!DOCTYPE HTML
+Priority error. Job 1 should be /4/dummy1.html,                      but is <!DOCTYPE HTML
+Priority error. Job 2 should be /3/dummy1.html,                      but is <!DOCTYPE HTML
+Priority error. Job 3 should be /2/dummy1.html,                      but is <!DOCTYPE HTML
+Priority error. Job 4 should be /1/dummy1.html,                      but is <!DOCTYPE HTML
+Test 9 failed
+Running test 10 (Number of worker threads)...
+Request did not time out and returned
+Test 10 failed
+Total score: 4

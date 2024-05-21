@@ -1,0 +1,6 @@
+fix worker threads
+    problem is passing the request over
+    how do I do that?
+to run given tests
+to test QUEUE_MAX
+to test sleep

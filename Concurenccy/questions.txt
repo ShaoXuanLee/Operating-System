@@ -1,0 +1,83 @@
+questions
+if I run twice curl then it will freeze
+
+
+1
+so does step 1 just mean creating threads?
+
+are we modifying proxyserver.c serve_forever or creating another function?
+wasnt quite sure what discussion ta meant
+
+and listen, what does 1024 mean in backlog, google documentation about listen syscall?
+any hints?
+
+       listen() marks the socket referred to by sockfd as a passive
+       socket, that is, as a socket that will be used to accept incoming
+       connection requests using accept(2).
+
+       The sockfd argument is a file descriptor that refers to a socket
+       of type SOCK_STREAM or SOCK_SEQPACKET.
+
+       The backlog argument defines the maximum length to which the
+       queue of pending connections for sockfd may grow.  If a
+       connection request arrives when the queue is full, the client may
+       receive an error with an indication of ECONNREFUSED or, if the
+       underlying protocol supports retransmission, the request may be
+       ignored so that a later reattempt at connection succeeds.
+
+what is socket
+so would the backlog value be 1024 * listeners?
+
+difference between listening and worker threads
+is listener producers and workers consumers
+
+$ ./proxyserver -l <num listeners> <ports list> 
+                -w <num workers> 
+                -p <port of target file server> 
+                -i <IP address of target file server> 
+                -q <max number of requests in the priority queue> 
+
+./proxyserver -l 1 33489 -w 1 -i 127.0.0.1 -p 57455 -q 10
+
+what does ports list mean
+
+are the differrent threads (listener and worker) on different ports?
+cuz from my understanding ports is light a huge array from 1 to 65535 
+    and 1 to 1023 is well known and we wont be touching, so we touch 1024 to 65535
+
+    does the call above mean listners is in range of 33489 to 33489?
+    so if 10 listeners exist then its 33489 to 33499
+
+    would it be possible the port is not free in that range? what happens then? 
+
+
+2
+the priority queue's priority is based on the requested files directory position.
+meaning 10 > 3, 10 directory has higher priority than 3
+
+what does "does NOT need to be forwarded to the file server." mean?
+does that mean it doesn go on pqueue and just pop from pqueue and return with the format??
+
+in discussion i wasnt quite clear when the ta said dont use one big lock
+if so im not sure how to use max heap to create a priority queue with locks
+but for the scope of this project i could use an array of linked list? and that would have 10 locks which is faster
+would that suffice?
+is there higher forms of test case that i need to be aware of?
+
+another way is to just multiply the directory number by -1 to ensure the "biggest number"
+
+just one big lock for the accessing of priority queue, not whatever larger function scope
+
+5
+server_request will talk to public_html server, wait and get the data and return to client?
+
+essentially this project is kinda like playing pass the message game
+
+
+does start.py just starts the public_html server?
+
+
+new
+is there multiple server_fd s?
+why is server_fd being passed in if it was never initialized
+    because its used everywhere
